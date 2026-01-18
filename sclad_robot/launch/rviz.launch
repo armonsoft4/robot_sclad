@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- <include file="$(find openni_launch)/launch/openni.launch">
+        <arg name="depth_registration" value="true"/>
+    </include> -->
+    
+    <arg name="rvizconfig" default="$(find sclad_robot)/config/base_config.rviz" />
+    <arg name="port" default="/dev/ttyACM0" />
+    <param name="robot_description" command="$(find xacro)/xacro $(find sclad_robot)/urdf/sclad_robot_base_model.urdf"/>
+    
+    <node pkg="rosserial_python" type="serial_node.py" name="rosserial_python" args="$(arg port)"/>
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+    <node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher"/>    
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rvizconfig)"/>
+
+
+
+</launch>

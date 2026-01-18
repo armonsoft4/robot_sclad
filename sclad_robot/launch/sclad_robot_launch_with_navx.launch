@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+   
+    <!-- Configuration arguments -->
+    <arg name="rvizconfig" default="$(find sclad_robot)/config/base_config.rviz" />
+    <arg name="port" default="/dev/ttyACM0" />
+    <arg name="baud" default="57600" />
+    
+    <!-- Load robot description with IMU link -->
+    <!-- Choose one of these robot descriptions:
+         - Original: sclad_robot_base_model.urdf
+         - With IMU: sclad_robot_base_model_with_imu.urdf (RECOMMENDED)
+    -->
+    <param name="robot_description" 
+           command="$(find xacro)/xacro $(find sclad_robot)/urdf/sclad_robot_base_model_with_imu.urdf"/>
+    
+    <!-- Start rosserial connection to Arduino with navX IMU -->
+    <node pkg="rosserial_python" 
+          type="serial_node.py" 
+          name="rosserial_python" 
+          args="$(arg port) _baud:=$(arg baud)"
+          output="screen"/>
+    
+    <!-- Robot state publisher - publishes TF transforms from URDF -->
+    <node pkg="robot_state_publisher" 
+          type="robot_state_publisher" 
+          name="robot_state_publisher"
+          output="screen"/>
+    
+    <!-- Joint state publisher GUI for interactive joint control -->
+    <node pkg="joint_state_publisher_gui" 
+          type="joint_state_publisher_gui" 
+          name="joint_state_publisher"
+          output="screen"/>    
+    
+    <!-- RViz for visualization -->
+    <node pkg="rviz" 
+          type="rviz" 
+          name="rviz" 
+          args="-d $(arg rvizconfig)"
+          output="screen"/>
+
+</launch>
